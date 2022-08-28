@@ -2,7 +2,6 @@
   <form @submit="onSubmit" class="add-form">
     <div class="form-control">
       <label>Task</label>
-      {{text}}
       <!-- v-model for the input -->
       <input type="text" v-model="text" name="text" placeholder="Add Task" />
     </div>
@@ -36,6 +35,33 @@ export default {
       reminder:false
     }
   },
+  methods:{
+    onSubmit(e){
+      e.preventDefault()
+      if(!this.text){
+        alert("Please fill the form")
+      }
+
+
+      //store new task in an object
+      const newTask = {
+        id:Math.floor(Math.random()*100),
+        text: this.text,
+        day:this.day,
+        reminder:this.reminder
+
+      }
+
+      //reset the form
+      this.text =''
+      this.day=''
+      this.reminder=false
+
+     //emit the date to one level up 
+     this.$emit('add-task',newTask)
+    
+    }
+  }
   
 }
   

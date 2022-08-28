@@ -2,8 +2,12 @@
 
 <div class="container">
   <!-- pass the props here -->
-<TaskHeader title="Task Tracker"/>
-<AddTask />
+<TaskHeader @toggle-add-task="toggleAddTask" title="Task Tracker" :showAddTask="showAddTask"/>
+<div v-if="showAddTask" >
+<!-- call emit from addtask children -->
+<AddTask  @add-task="addTask"/>
+</div>
+
 <!-- v:bind the tasks data,add methods here
 delete-task is from two level down Task.vue component -->
 <TasksArray 
@@ -30,7 +34,8 @@ export default {
 },
 data(){
   return {
-    tasks:[]
+    tasks:[],
+    showAddTask:false
   }
 },
 //liftmethods, methods
@@ -40,17 +45,20 @@ created(){
     text:"Vue studying",
     day:"31/08/2022",
     reminder:true},
-    {id:2,
-    text:"React studying",
-    day:"31/08/2022",
-    reminder:true},
-    {id:3,
-    text:"Node js studying",
-    day:"31/08/2022",
-    reminder:false},
   ]
 },
 methods:{
+  toggleAddTask(){
+    this.showAddTask=!this.showAddTask
+  },
+  //add a new task
+  addTask(task){
+    //set this.tasks equal to copy exsit tasks
+    // and puls new task
+    this.tasks = [...this.tasks,task]
+
+  }
+  ,
   deleteTask(id){
     
     if(confirm("Are you sure?")){
@@ -67,8 +75,6 @@ this.tasks = this.tasks.filter((task)=> task.id !==id)
     //and set the opposite of task reminder,otherwise just task
     task.id ===id? {...task,reminder:!task.reminder}: task
     )
-    
-console.log('task',id)
   }
 }
 }

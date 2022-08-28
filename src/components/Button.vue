@@ -18,7 +18,7 @@ export default {
   },
   methods:{
     onClick(){
-      console.log("cluck")
+      this.$emit("toggle-add-task")
     }
   }
 }

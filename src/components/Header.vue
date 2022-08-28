@@ -2,7 +2,10 @@
 
   <header>
     <h1>{{title}}</h1>
-    <AddButton text="Add Task" color="green"/>
+    <!-- v:bind the text and color depends on showAddTask boolean -->
+    <AddButton @toggle-add-task="$emit('toggle-add-task')" 
+    :text="showAddTask? 'Close Task': 'Add Task'" 
+    :color="showAddTask? 'red':'green'" />
 
   </header>
 
@@ -16,7 +19,8 @@ export default {
   //props can be an array or object
   props:{
     //type
-    title:String
+    title:String,
+    showAddTask:Boolean
   },
 
   //render components here
