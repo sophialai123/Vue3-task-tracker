@@ -41,8 +41,6 @@ export default {
       if(!this.text){
         alert("Please fill the form")
       }
-
-
       //store new task in an object
       const newTask = {
         id:Math.floor(Math.random()*100),

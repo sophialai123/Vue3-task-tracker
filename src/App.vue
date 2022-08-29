@@ -38,45 +38,93 @@ data(){
     showAddTask:false
   }
 },
-//liftmethods, methods
-created(){
-  this.tasks=[
-    {id:1,
-    text:"Vue studying",
-    day:"31/08/2022",
-    reminder:true},
-  ]
-},
 methods:{
+  //fetch data from db.json 
+  async fetchTasks(){
+    const res = await fetch('http://localhost:3000/tasks')
+
+    const data = await res.json()
+    return data
+  },
+  //fetch a single task  
+  async fetchTask(id){
+    const res = await fetch(`http://localhost:3000/tasks/${id}`)
+
+    const data = await res.json()
+    return data
+  },
   toggleAddTask(){
     this.showAddTask=!this.showAddTask
   },
+
+
+  
   //add a new task
-  addTask(task){
+  async addTask(task){
+  //make a request POST resquest 
+    const res = await fetch('http://localhost:3000/tasks',
+    {method:"POST",
+      headers:{
+        'Content-type':'application/json'
+      },
+      body:JSON.stringify(task)
+    })
+     //get new task back from serve
+     const data = await res.json()
     //set this.tasks equal to copy exsit tasks
     // and puls new task
-    this.tasks = [...this.tasks,task]
+    this.tasks = [...this.tasks,data]
 
-  }
-  ,
-  deleteTask(id){
-    
+  },
+
+
+//make a request DELETE resquest 
+  async deleteTask(id){
     if(confirm("Are you sure?")){
-this.tasks = this.tasks.filter((task)=> task.id !==id)
+      const res = await fetch(`http://localhost:3000/tasks/${id}`,{
+      method:'DELETE'
+    })
+    
+    //check the status,
+    //if status is 200, delete task id
+    //otherwise alert
+    res.status === 200 ? (this.tasks = this.tasks.filter((task)=> task.id !== id)): alert("Error deleting task")
     }
     
   },
 
   //toggle task reminder the border color 
-  toggleReminder(id){
-//updated the tasks
+  async toggleReminder(id){
+    
+    //toggle the single task
+    const taskToToggle = await this.fetchTask(id)
+    //set to opposit the reminder boolean
+    const updTask = {...taskToToggle,reminder:!taskToToggle.reminder}
+
+
+    //make a UPDATE request
+    const res =  await fetch(`http://localhost:3000/tasks/${id}`,{
+      method: "PUT",
+      headers:{
+        'Content-type':'application/json'
+      },
+      body: JSON.stringify(updTask)
+    })
+
+    const data = await res.json()
+   //updated the tasks
     this.tasks = this.tasks.map((task)=>
     //if the task.id match id, the copy the task object
     //and set the opposite of task reminder,otherwise just task
-    task.id ===id? {...task,reminder:!task.reminder}: task
+    task.id ===id? {...task,reminder: data.reminder}: task
     )
   }
-}
+},
+//promise fetch data from serve
+async created(){
+  //get data from fetch data from json
+  this.tasks= await this.fetchTasks()
+},
 }
 </script>
 
